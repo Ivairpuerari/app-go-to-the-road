@@ -1,7 +1,9 @@
 import {useRoute} from '@react-navigation/native';
-import React, {useState} from 'react';
-import {Text, View} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {ScrollView} from 'react-native-gesture-handler';
 import {ProgressStep, ProgressSteps} from 'react-native-progress-steps';
+import Feather from 'react-native-vector-icons/Feather';
 import Styles from './styles';
 
 export default function Checklist() {
@@ -9,14 +11,19 @@ export default function Checklist() {
 
   const route = useRoute();
 
+  const [activeStep, setActiveStep] = useState(0);
+
   const frota = route.params.frota;
 
   const [error, setError] = useState(false);
 
+  useEffect(() => {
+    setActiveStep(0);
+  }, []);
   const itemsFicticios = [
     {
       id: 1,
-      title: 'Mercadoria Carregada',
+      title: 'Mercadoria Pronta',
       description:
         'Estado da mercadoria incluido no Baú do caminhão que compoe está frota.',
     },
@@ -27,8 +34,9 @@ export default function Checklist() {
     },
     {
       id: 3,
-      title: 'Caminhão Finalizado',
-      description: 'Caminhão da frota pronto para seguir viagem.',
+      title: 'Documentação entregue',
+      description:
+        'Caminhão da frota pronto para seguir viagem com documentação entregue ao motorista.',
     },
   ];
 
@@ -42,28 +50,69 @@ export default function Checklist() {
 
   return (
     <View style={Styles.container}>
-      <ProgressSteps>
-        <View style={Styles.container}>
-          <ProgressStep label="Baú Vazio" onNext={onNextStep} errors={error}>
-            <Text>This is the content within step 2!</Text>
+      <ScrollView>
+        <ProgressSteps
+          progressBarColor="#029B11"
+          activeStepIconBorderColor="#029B11"
+          activeLabelColor="#029B11"
+          completedProgressBarColor="#029B11"
+          completedStepIconColor="#029B11"
+          removeBtnRow={true}
+          activeStep={activeStep}>
+          <ProgressStep removeBtnRow label={itemsFicticios[0].title}>
+            <Text>{itemsFicticios[0].description}</Text>
+            <TouchableOpacity
+              onPress={() => {
+                setActiveStep(1);
+              }}>
+              <Feather name="arrow-right" size={40} color="#029B11" />
+            </TouchableOpacity>
           </ProgressStep>
-        </View>
-        <View style={Styles.container}>
-          <ProgressStep label="Baú Carregado">
-            <Text>This is the content within step 2!</Text>
+
+          <ProgressStep removeBtnRow label={itemsFicticios[1].title}>
+            <Text>{itemsFicticios[1].description}</Text>
+            <TouchableOpacity
+              onPress={() => {
+                setActiveStep(2);
+              }}>
+              <Feather name="arrow-right" size={40} color="#029B11" />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                setActiveStep(0);
+                console.log(activeStep);
+              }}>
+              <Feather name="arrow-left" size={40} color="#029B11" />
+            </TouchableOpacity>
           </ProgressStep>
-        </View>
-        <View style={Styles.container}>
-          <ProgressStep label="Carga Pronta">
-            <Text>This is the content within step 3!</Text>
+
+          <ProgressStep label={itemsFicticios[2].title}>
+            <Text>{itemsFicticios[2].description}</Text>
           </ProgressStep>
-        </View>
-        <View style={Styles.container}>
+
           <ProgressStep label="Finalizar">
-            <Text>This is the content within step 3!</Text>
+            <Text>Finalizado</Text>
           </ProgressStep>
-        </View>
-      </ProgressSteps>
+        </ProgressSteps>
+      </ScrollView>
     </View>
   );
 }
+
+const styleBtn = StyleSheet.create({
+  // ...
+  appButtonContainer: {
+    elevation: 8,
+    backgroundColor: '#029B11',
+    borderRadius: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 12,
+  },
+  appButtonText: {
+    fontSize: 12,
+    color: '#fff',
+    fontWeight: 'bold',
+    alignSelf: 'center',
+    textTransform: 'uppercase',
+  },
+});
